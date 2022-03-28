@@ -10,36 +10,59 @@
  * or 32 bits, but this data type would only reach 4 bytes when it's 8 digits long.
  */
 
+/**
+ * This only exists because apparently `strrev` is not available in C.
+ */
+char* strrev(char *str)
+{
+    if (!str || ! *str)
+        return str;
+
+    int i = strlen(str) - 1, j = 0;
+
+    char ch;
+    while (i > j)
+    {
+        ch = str[i];
+        str[i] = str[j];
+        str[j] = ch;
+        i--;
+        j++;
+    }
+
+    return str;
+}
 
 /**
  * A function that takes two strings and returns the sum of the two strings.
  */
 static char* _add(char* str1, char* str2)
 {
-  char *a, *b, *c;
+  char *a, *b;
+  char *c = "";
+  int lengthDiff;
 
   // Set the longest string to a, and the shortest to b.
   if (strlen(str2) > strlen(str1))
   {
-    char* a = strrev(str2);
-    char* b = strrev(str1);
+    a = strrev(str2);
+    b = strrev(str1);
+    lengthDiff = strlen(str2) - strlen(str1);
   }
   else
   {
-    char* a = strrev(str1);
-    char* b = strrev(str2);
+    a = strrev(str1);
+    b = strrev(str2);
+    lengthDiff = strlen(str1) - strlen(str2);
   }
-
-  // Get the difference in length between the two strings.
-  int lengthDiff = strlen(a) - strlen(b);
 
   // Add the two string integers together.
   int carry = 0;
   int sum, i;
-  char *t;
+  char *t = malloc(sizeof(char) * (strlen(a) + 1));
   for (i = 0; i < strlen(b); i++)
   {
-    sum = atoi(a[i]) + atoi(b[i]) + carry;
+    sum = atoi(&a[i]) + atoi(&b[i]) + carry;
     if (sum > 9)
     {
       carry = 1;
@@ -51,7 +74,7 @@ static char* _add(char* str1, char* str2)
     }
 
     sprintf(t, "%c", sum);
-    strncat(c, &t, 1);
+    strncat(c, t, 1);
   }
 
   if (carry > 0)
@@ -60,7 +83,7 @@ static char* _add(char* str1, char* str2)
     {
       while (carry > 0 && i < strlen(a))
       {
-        sum = atoi(a[i]) + carry;
+        sum = atoi(&a[i]) + carry;
         if (sum > 9)
         {
           carry = 1;
@@ -72,21 +95,21 @@ static char* _add(char* str1, char* str2)
         }
 
         sprintf(t, "%c", sum);
-        strncat(c, &t, 1);
+        strncat(c, t, 1);
         i++;
       }
 
       if (carry > 0)
       {
         sprintf(t, "%c", carry);
-        strncat(c, &t, 1);
+        strncat(c, t, 1);
       }
 
       if (i < strlen(a))
       {
         while (i < strlen(a))
         {
-          strncat(c, a[i++], 1);
+          strncat(c, &a[i++], 1);
         }
       }
     }
@@ -96,7 +119,7 @@ static char* _add(char* str1, char* str2)
       // then we simply add the carried vallue to the end of the string.
 
       sprintf(t, "%c", carry);
-      strncat(c, &t, 1);
+      strncat(c, t, 1);
     }
   }
 
@@ -107,10 +130,10 @@ static char* _add(char* str1, char* str2)
  * TODO: A function that takes two positive integer strings and subtracts string b from string a.
  * TODO: Expand this to enable subtracting either a positive decimal or integer from another.
  */
-static char* _subtract(char* a, char* b)
-{
-  return "...";
-}
+// static char* _subtract(char* a, char* b)
+// {
+//   return "...";
+// }
 
 char* strmath_sum(char* a, char* b)
 {
@@ -133,12 +156,8 @@ char* strmath_sum(char* a, char* b)
   {
     //
   }
-  else
-  {
-    //
-  }
 
-  return "fish";
+  return _add(a, b);
 }
 
 
@@ -149,41 +168,41 @@ int main(int argc, char *argv[])
 {
   char *a, *b, *c;
 
-  printf("test sum of two negative integers\n");
-  a = "-4";
-  b = "-5";
-  c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  // printf("test sum of two negative integers\n");
+  // a = "-4";
+  // b = "-5";
+  // c = strmath_sum(a, b);
+  // printf("(%s) + (%s) = %s\n", a, b, c);
 
   printf("test sum of two positive integers\n");
   a = "7";
   b = "5";
   c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("%s + %s = %s\n", a, b, c);
 
-  printf("test sum of a positive integer with a negative integer of lesser absolute value, with the negative integer first\n");
-  a = "-4";
-  b = "5";
-  c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  // printf("test sum of a positive integer with a negative integer of lesser absolute value, with the negative integer first\n");
+  // a = "-4";
+  // b = "5";
+  // c = strmath_sum(a, b);
+  // printf("(%s) + (%s) = %s\n", a, b, c);
 
-  printf("test sum of a positive integer with a negative integer of greater absolute value, with the negative integer first\n");
-  a = "-4";
-  b = "3";
-  c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  // printf("test sum of a positive integer with a negative integer of greater absolute value, with the negative integer first\n");
+  // a = "-4";
+  // b = "3";
+  // c = strmath_sum(a, b);
+  // printf("(%s) + (%s) = %s\n", a, b, c);
 
-  printf("test sum of a positive integer with a negative integer of lesser absolute value, with the positive integer first\n");
-  a = "4";
-  b = "-3";
-  c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  // printf("test sum of a positive integer with a negative integer of lesser absolute value, with the positive integer first\n");
+  // a = "4";
+  // b = "-3";
+  // c = strmath_sum(a, b);
+  // printf("(%s) + (%s) = %s\n", a, b, c);
 
-  printf("test sum of a positive integer with a negative integer of greater absolute value, with the positive integer first\n");
-  a = "4";
-  b = "-5";
-  c = strmath_sum(a, b);
-  printf("(%s) + (%s) = %s\n", a, b, c);
+  // printf("test sum of a positive integer with a negative integer of greater absolute value, with the positive integer first\n");
+  // a = "4";
+  // b = "-5";
+  // c = strmath_sum(a, b);
+  // printf("(%s) + (%s) = %s\n", a, b, c);
 
   return 0;
 }
