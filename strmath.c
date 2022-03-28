@@ -10,80 +10,106 @@
  * or 32 bits, but this data type would only reach 4 bytes when it's 8 digits long.
  */
 
+
 /**
- * Adds two positive integers together.
- * TODO: Expand this to allow both integers and decimal numbers to be added together.
+ * A function that takes two strings and returns the sum of the two strings.
  */
 static char* _add(char* str1, char* str2)
 {
   char *a, *b, *c;
-  int lengthDiff;
 
+  // Set the longest string to a, and the shortest to b.
   if (strlen(str2) > strlen(str1))
   {
-    a = str2;
-    b = str1;
-    lengthDiff = strlen(b) - strlen(a);
+    char* a = strrev(str2);
+    char* b = strrev(str1);
   }
   else
   {
-    a = str1;
-    b = str2;
-    lengthDiff = strlen(a) - strlen(b);
+    char* a = strrev(str1);
+    char* b = strrev(str2);
   }
 
+  // Get the difference in length between the two strings.
+  int lengthDiff = strlen(a) - strlen(b);
+
+  // Add the two string integers together.
   int carry = 0;
-  int sum;
-  char *temp[strlen(a)];
-  for (int i = strlen(a)-1; i >= lengthDiff; i--)
+  int sum, i;
+  char *t;
+  for (i = 0; i < strlen(b); i++)
   {
-    // TODO: This DOESN'T WORK. If a is longer than b, then this just adds the first strlen(b) digits of a to b. Not good math.
-    sum = atoi(a[i]) + atoi(b[i-lengthDiff]) + carry;
-    carry = 0;
+    sum = atoi(a[i]) + atoi(b[i]) + carry;
     if (sum > 9)
     {
       carry = 1;
-      sum -= 10;
-    }
-    sprintf(t,"%d",sum);
-    temp[i] = t[0];
-  }
-  // TODO: Handle when i == lengthDiff is reached (i.e. only the carryOver and digits of a that are greater than the length of b remain).
-
-  if (lengthDiff > 0)
-  {
-    char *c;
-    if (carry > 0)
-    {
+      sum = sum - 10;
     }
     else
     {
-      for (int i = 0; i < lengthDiff; i++)
-      {
-        c[i] = a[i];
-      }
+      carry = 0;
     }
-    strcat(c,temp);
-  }
-  else if (carry > 0)
-  {
-//    char* c = (char*) malloc(strlen(a) + 1);
-    char c[0] = '1';
-    strcat(c,temp);
+
+    sprintf(t, "%c", sum);
+    strncat(c, &t, 1);
   }
 
-  //
-  return c;
+  if (carry > 0)
+  {
+    if (lengthDiff > 0)
+    {
+      while (carry > 0 && i < strlen(a))
+      {
+        sum = atoi(a[i]) + carry;
+        if (sum > 9)
+        {
+          carry = 1;
+          sum = sum - 10;
+        }
+        else
+        {
+          carry = 0;
+        }
+
+        sprintf(t, "%c", sum);
+        strncat(c, &t, 1);
+        i++;
+      }
+
+      if (carry > 0)
+      {
+        sprintf(t, "%c", carry);
+        strncat(c, &t, 1);
+      }
+
+      if (i < strlen(a))
+      {
+        while (i < strlen(a))
+        {
+          strncat(c, a[i++], 1);
+        }
+      }
+    }
+    else
+    {
+      // If there is still something being carried over, but the two strings are the same length,
+      // then we simply add the carried vallue to the end of the string.
+
+      sprintf(t, "%c", carry);
+      strncat(c, &t, 1);
+    }
+  }
+
+  return strrev(c);
 }
 
 /**
- * Subtracts positive integer b from positive integer a.
+ * TODO: A function that takes two positive integer strings and subtracts string b from string a.
  * TODO: Expand this to enable subtracting either a positive decimal or integer from another.
  */
 static char* _subtract(char* a, char* b)
 {
-  //
-  return "123456789";
+  return "...";
 }
 
 char* strmath_sum(char* a, char* b)
