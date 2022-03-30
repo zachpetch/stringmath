@@ -57,13 +57,15 @@ static char* _add(char* str1, char* str2)
   int carry = 0;
   int sum, i;
   char *t = malloc(1);
+  char ca, cb;
+  int ia, ib;
   for (i = 0; i < strlen(b); i++)
   {
-    // TODO: DELETE THIS TEST PRINT
-    printf("i = %d; a[i] = %d; b[i] = %d; carry = %d;\n", i, a[i], b[i], carry);
-    sum = atoi(&a[i]) + atoi(&b[i]) + carry;
-    // TODO: DELETE THIS TEST PRINT
-    printf("sum = %d;\n", sum);
+    ca = a[i];
+    cb = b[i];
+    ia = ca - '0';
+    ib = cb - '0';
+    sum = ia + ib + carry;
     if (sum > 9)
     {
       carry = 1;
@@ -76,8 +78,6 @@ static char* _add(char* str1, char* str2)
 
     sprintf(t, "%d", sum);
     strncat(c, t, 1);
-    // TODO: DELETE THIS TEST PRINT
-    printf("so far c is %s\n", c);
   }
 
   if (carry > 0)
@@ -86,7 +86,9 @@ static char* _add(char* str1, char* str2)
     {
       while (carry > 0 && i < strlen(a))
       {
-        sum = atoi(&a[i]) + carry;
+        ca = a[i];
+        ia = ca - '0';
+        sum = ia + carry;
         if (sum > 9)
         {
           carry = 1;
@@ -119,7 +121,7 @@ static char* _add(char* str1, char* str2)
     else
     {
       // If there is still something being carried over, but the two strings are the same length,
-      // then we simply add the carried vallue to the end of the string.
+      // then we simply add the carried value to the end of the string.
       sprintf(t, "%d", carry);
       strncat(c, t, 1);
     }
@@ -183,8 +185,8 @@ int main(int argc, char *argv[])
   printf("%s + %s = %s\n", a, b, c);
 
   printf("test sum of two bigger positive integers\n");
-  a = "712";
-  b = "511";
+  a = "495";
+  b = "678";
   c = strmath_sum(a, b);
   printf("%s + %s = %s\n", a, b, c);
 
