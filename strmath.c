@@ -126,6 +126,17 @@ static char* _add(char* str1, char* str2)
       strncat(c, t, 1);
     }
   }
+  else
+  {
+    // If there is no risidual carry-over, then the rest of the string a is added to the end of c.
+    if (lengthDiff > 0)
+    {
+      while (i < strlen(a))
+      {
+        strncat(c, &a[i++], 1);
+      }
+    }
+  }
 
   return strrev(c);
 }
@@ -134,36 +145,42 @@ static char* _add(char* str1, char* str2)
  * TODO: A function that takes two positive integer strings and subtracts string b from string a.
  * TODO: Expand this to enable subtracting either a positive decimal or integer from another.
  */
-// static char* _subtract(char* a, char* b)
-// {
-//   return "...";
-// }
+static char* _subtract(char* a, char* b)
+{
+  // Find which has the greater absolute value.
+  // Subtract the smaller from the larger
+  // If the larger was negative, then we need to add the negative sign back on, else not.
+  return "not implemented";
+}
 
 char* strmath_sum(char* a, char* b)
 {
   if (a[0] == '-' && b[0] == '-')
   {
-    char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on;
+    // If both numbers are negative, this is easy because it's still addition.
+    char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on (ex. if a is -23, unsignedA is 23).
     char* unsignedB = b + 1;
     char* sum = _add(unsignedA, unsignedB);
     char* c = (char*) malloc(strlen(sum) + 1);
-    c[0] = '-'; //segfault, can't edit contents of a string
+    c[0] = '-';
     strcat(c,sum);
 
     return c;
   }
   else if (a[0] == '-')
   {
-    //
+    // This is less easy because it's actual subtraction.
+    // But what is subtraction? Well, it's adding the negative inverse of a number to another number.
+    return _subtract(a, b);
   }
   else if (b[0] == '-')
   {
-    //
+    // This is also easy because I'm assuming I've solved the previous case.
+    return strmath_sum(b, a);
   }
 
   return _add(a, b);
 }
-
 
 
 // Contemplate having an all-encompasing string math function. Where you submit a string of math, like "-5^3+4*9^(1/2)" and it returns the correct answer as a string (in this example, "-113").
@@ -172,53 +189,59 @@ int main(int argc, char *argv[])
 {
   char *a, *b, *c;
 
-  // printf("test sum of two negative integers\n");
-  // a = "-4";
-  // b = "-5";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("\ntest sum of two negative integers\n");
+  a = "-444";
+  b = "-5";
+  c = strmath_sum(a, b);
+  printf("(%s) + (%s) = %s\n", a, b, c);
 
-  printf("test sum of two positive integers\n");
+  printf("\ntest sum of two positive integers\n");
   a = "7";
   b = "5";
   c = strmath_sum(a, b);
   printf("%s + %s = %s\n", a, b, c);
 
-  printf("test sum of two bigger positive integers\n");
+  printf("\ntest sum of two bigger positive integers\n");
   a = "495";
   b = "678";
   c = strmath_sum(a, b);
   printf("%s + %s = %s\n", a, b, c);
 
-  printf("test sum of two asymetrical positive integers\n");
+  printf("\ntest sum of two asymetrical positive integers\n");
+  a = "444";
+  b = "5";
+  c = strmath_sum(a, b);
+  printf("%s + %s = %s\n", a, b, c);
+
+  printf("\ntest sum of two bigger asymetrical positive integers\n");
   a = "999";
   b = "999999";
   c = strmath_sum(a, b);
   printf("%s + %s = %s\n", a, b, c);
 
-  // printf("test sum of a positive integer with a negative integer of lesser absolute value, with the negative integer first\n");
-  // a = "-4";
-  // b = "5";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the negative integer first\n");
+  a = "-4";
+  b = "5";
+  c = strmath_sum(a, b);
+  printf("(%s) + %s = %s\n", a, b, c);
 
-  // printf("test sum of a positive integer with a negative integer of greater absolute value, with the negative integer first\n");
-  // a = "-4";
-  // b = "3";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the negative integer first\n");
+  a = "-4";
+  b = "3";
+  c = strmath_sum(a, b);
+  printf("(%s) + %s = %s\n", a, b, c);
 
-  // printf("test sum of a positive integer with a negative integer of lesser absolute value, with the positive integer first\n");
-  // a = "4";
-  // b = "-3";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the positive integer first\n");
+  a = "4";
+  b = "-3";
+  c = strmath_sum(a, b);
+  printf("%s + (%s) = %s\n", a, b, c);
 
-  // printf("test sum of a positive integer with a negative integer of greater absolute value, with the positive integer first\n");
-  // a = "4";
-  // b = "-5";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+  printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the positive integer first\n");
+  a = "4";
+  b = "-5";
+  c = strmath_sum(a, b);
+  printf("%s + (%s) = %s\n", a, b, c);
 
   return 0;
 }
