@@ -16,36 +16,36 @@
  */
 
 /**
- * This only exists because apparently `strrev` is not available in C.
+ * This only exists because apparently `strrev` is not available in my version (most versions?) of C.
  */
 char* strrev(char *str)
 {
-  if (!str || ! *str)
-    return str;
+	if (!str || ! *str)
+		return str;
 
-  char *newstr = malloc(strlen(str));
-  int i = strlen(str) - 1;
+	char *newstr = malloc(strlen(str));
+	int i = strlen(str) - 1;
 
-  while (i >= 0)
-  {
-    newstr = strncat(newstr, &str[i--], 1);
-  }
+	while (i >= 0)
+	{
+		newstr = strncat(newstr, &str[i--], 1);
+	}
 
-  return newstr;
+	return newstr;
 }
 
 static int _compare_abs_value(const char *a, const char *b)
 {
-  int a_size = strlen(a);
-  int b_size = strlen(b);
+	int a_size = strlen(a);
+	int b_size = strlen(b);
 
-  if (a_size > b_size)
-    return 1;
-  else if (a_size < b_size)
-    return -1;
+	if (a_size > b_size)
+		return 1;
+	else if (a_size < b_size)
+		return -1;
 
-  // If neither string of characters is greater than the other, then they must be equal in length, and the characters themselves dictate which is larger.
-  return strcmp(a, b);
+	// If neither string of characters is greater than the other, then they must be equal in length, and the characters themselves dictate which is larger.
+	return strcmp(a, b);
 }
 
 /**
@@ -54,111 +54,111 @@ static int _compare_abs_value(const char *a, const char *b)
  */
 static char* _add(char* str1, char* str2)
 {
-  char *a, *b, *c;
-  int lengthDiff;
+	char *a, *b, *c;
+	int lengthDiff;
 
-  // Set the longest string to a, and the shortest to b.
-  if (strlen(str2) > strlen(str1))
-  {
-    a = strrev(str2);
-    b = strrev(str1);
-    lengthDiff = strlen(str2) - strlen(str1);
-    c = malloc(strlen(str2) + 1);
-  }
-  else
-  {
-    a = strrev(str1);
-    b = strrev(str2);
-    lengthDiff = strlen(str1) - strlen(str2);
-    c = malloc(strlen(str1) + 1);
-  }
+	// Set the longest string to a, and the shortest to b.
+	if (strlen(str2) > strlen(str1))
+	{
+		a = strrev(str2);
+		b = strrev(str1);
+		lengthDiff = strlen(str2) - strlen(str1);
+		c = malloc(strlen(str2) + 1);
+	}
+	else
+	{
+		a = strrev(str1);
+		b = strrev(str2);
+		lengthDiff = strlen(str1) - strlen(str2);
+		c = malloc(strlen(str1) + 1);
+	}
 
-  // Add the two string integers together.
-  int carry = 0;
-  int sum, i;
-  char *t = malloc(1);
-  char ca, cb;
-  int ia, ib;
-  for (i = 0; i < strlen(b); i++)
-  {
-    ca = a[i];
-    cb = b[i];
-    ia = ca - '0';
-    ib = cb - '0';
-    sum = ia + ib + carry;
-    if (sum > 9)
-    {
-      carry = 1;
-      sum = sum - 10;
-    }
-    else
-    {
-      carry = 0;
-    }
+	// Add the two string integers together.
+	int carry = 0;
+	int sum, i;
+	char *t = malloc(1);
+	char ca, cb;
+	int ia, ib;
+	for (i = 0; i < strlen(b); i++)
+	{
+		ca = a[i];
+		cb = b[i];
+		ia = ca - '0';
+		ib = cb - '0';
+		sum = ia + ib + carry;
+		if (sum > 9)
+		{
+			carry = 1;
+			sum = sum - 10;
+		}
+		else
+		{
+			carry = 0;
+		}
 
-    sprintf(t, "%d", sum);
-    strncat(c, t, 1);
-  }
+		sprintf(t, "%d", sum);
+		strncat(c, t, 1);
+	}
 
-  if (carry > 0)
-  {
-    if (lengthDiff > 0)
-    {
-      while (carry > 0 && i < strlen(a))
-      {
-        ca = a[i];
-        ia = ca - '0';
-        sum = ia + carry;
-        if (sum > 9)
-        {
-          carry = 1;
-          sum = sum - 10;
-        }
-        else
-        {
-          carry = 0;
-        }
+	if (carry > 0)
+	{
+		if (lengthDiff > 0)
+		{
+			while (carry > 0 && i < strlen(a))
+			{
+				ca = a[i];
+				ia = ca - '0';
+				sum = ia + carry;
+				if (sum > 9)
+				{
+					carry = 1;
+					sum = sum - 10;
+				}
+				else
+				{
+					carry = 0;
+				}
 
-        sprintf(t, "%d", sum);
-        strncat(c, t, 1);
-        i++;
-      }
+				sprintf(t, "%d", sum);
+				strncat(c, t, 1);
+				i++;
+			}
 
-      if (carry > 0)
-      {
-        sprintf(t, "%d", carry);
-        strncat(c, t, 1);
-      }
+			if (carry > 0)
+			{
+				sprintf(t, "%d", carry);
+				strncat(c, t, 1);
+			}
 
-      if (i < strlen(a))
-      {
-        while (i < strlen(a))
-        {
-          strncat(c, &a[i++], 1);
-        }
-      }
-    }
-    else
-    {
-      // If there is still something being carried over, but the two strings are the same length,
-      // then we simply add the carried value to the end of the string.
-      sprintf(t, "%d", carry);
-      strncat(c, t, 1);
-    }
-  }
-  else
-  {
-    // If there is no risidual carry-over, then the rest of the string a is added to the end of c.
-    if (lengthDiff > 0)
-    {
-      while (i < strlen(a))
-      {
-        strncat(c, &a[i++], 1);
-      }
-    }
-  }
+			if (i < strlen(a))
+			{
+				while (i < strlen(a))
+				{
+					strncat(c, &a[i++], 1);
+				}
+			}
+		}
+		else
+		{
+			// If there is still something being carried over, but the two strings are the same length,
+			// then we simply add the carried value to the end of the string.
+			sprintf(t, "%d", carry);
+			strncat(c, t, 1);
+		}
+	}
+	else
+	{
+		// If there is no risidual carry-over, then the rest of the string a is added to the end of c.
+		if (lengthDiff > 0)
+		{
+			while (i < strlen(a))
+			{
+				strncat(c, &a[i++], 1);
+			}
+		}
+	}
 
-  return strrev(c);
+	return strrev(c);
 }
 
 /**
@@ -170,112 +170,112 @@ static char* _add(char* str1, char* str2)
  */
 static char* _subtract(char* str1, char* str2)
 {
-  // If the values are the same, then subtracting one from the other will result in 0.
-  if (str1 == str2)
-  {
-    return "0";
-  }
+	// If the values are the same, then subtracting one from the other will result in 0.
+	if (str1 == str2)
+	{
+		return "0";
+	}
 
-  char *a, *b, *c;
-  int lengthDiff;
-  bool str1_was_longest = false;
+	char *a, *b, *c;
+	int lengthDiff;
+	bool str1_was_longest = false;
 
-  if (_compare_abs_value(str1, str2) > 0)
-  {
-    a = strrev(str1);
-    b = strrev(str2);
-    c = malloc(strlen(str1) + 1);
-    lengthDiff = strlen(str1) - strlen(str2);
-    str1_was_longest = true;
-  }
-  else
-  {
-    a = strrev(str2);
-    b = strrev(str1);
-    c = malloc(strlen(str2));
-    lengthDiff = strlen(str2) - strlen(str1);
-  }
+	if (_compare_abs_value(str1, str2) > 0)
+	{
+		a = strrev(str1);
+		b = strrev(str2);
+		c = malloc(strlen(str1) + 1);
+		lengthDiff = strlen(str1) - strlen(str2);
+		str1_was_longest = true;
+	}
+	else
+	{
+		a = strrev(str2);
+		b = strrev(str1);
+		c = malloc(strlen(str2));
+		lengthDiff = strlen(str2) - strlen(str1);
+	}
 
-  // Section: The subtracting part.
-  int borrow = 0;
-  int sum, i;
-  char *t = malloc(1);
-  char ca, cb;
-  int ia, ib;
-  for (i = 0; i < strlen(b); i++)
-  {
-    ca = a[i];
-    cb = b[i];
-    ia = ca - '0';
-    ib = cb - '0';
-    sum = ia - ib - borrow;
-    if (sum < 0)
-    {
-      sum = sum + 10;
-      borrow = 1;
-    }
-    else
-    {
-      borrow = 0;
-    }
-    sprintf(t, "%d", sum);
-    strncat(c, t, 1);
-  }
-  if (borrow > 0)
-  {
-    //
-  }
-  else
-  {
-    // If there was no risidual borrow-over, then the rest of the string a is added to the end of c.
-    if (lengthDiff > 0)
-    {
-      while (i < strlen(a))
-      {
-        strncat(c, &a[i++], 1);
-      }
-    }
-  }
-  // END Section: The subtracting part.
+	// Section: The subtracting part.
+	int borrow = 0;
+	int sum, i;
+	char *t = malloc(1);
+	char ca, cb;
+	int ia, ib;
+	for (i = 0; i < strlen(b); i++)
+	{
+		ca = a[i];
+		cb = b[i];
+		ia = ca - '0';
+		ib = cb - '0';
+		sum = ia - ib - borrow;
+		if (sum < 0)
+		{
+			sum = sum + 10;
+			borrow = 1;
+		}
+		else
+		{
+			borrow = 0;
+		}
+		sprintf(t, "%d", sum);
+		strncat(c, t, 1);
+	}
+	if (borrow > 0)
+	{
+		//
+	}
+	else
+	{
+		// If there was no risidual borrow-over, then the rest of the string a is added to the end of c.
+		if (lengthDiff > 0)
+		{
+			while (i < strlen(a))
+			{
+				strncat(c, &a[i++], 1);
+			}
+		}
+	}
+	// END Section: The subtracting part.
 
-  if (str1_was_longest)
-  {
-    // Add a '-' to the begining of the string (by adding it to the end before reversing the string).
-    strncat(c, "-", 1);
-  }
+	if (str1_was_longest)
+	{
+		// Add a '-' to the begining of the string (by adding it to the end before reversing the string).
+		strncat(c, "-", 1);
+	}
 
-  return strrev(c);
+	return strrev(c);
 }
 
 char* strmath_sum(char* a, char* b)
 {
-  if (a[0] == '-' && b[0] == '-')
-  {
-    // If both numbers are negative, this is easy because it's still addition.
-    char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on (ex. if a is -23, unsignedA is 23).
-    char* unsignedB = b + 1;
-    char* sum = _add(unsignedA, unsignedB);
-    char* c = (char*) malloc(strlen(sum) + 1);
-    c[0] = '-';
-    strcat(c,sum);
+	if (a[0] == '-' && b[0] == '-')
+	{
+		// If both numbers are negative, this is easy because it's still addition.
+		char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on (ex. if a is -23, unsignedA is 23).
+		char* unsignedB = b + 1;
+		char* sum = _add(unsignedA, unsignedB);
+		char* c = (char*) malloc(strlen(sum) + 1);
+		c[0] = '-';
+		strcat(c,sum);
 
-    return c;
-  }
-  else if (a[0] == '-')
-  {
-    // This is less easy because it's actual subtraction. Let's pass it off.
-    // But not without inverting `a`, which is negative, to positive.
-    // TODO: Figure out a more abstracted/universal way of doing this.
-    char* unsignedA = a + 1;
-    return _subtract(unsignedA, b);
-  }
-  else if (b[0] == '-')
-  {
-    // This is also easy because I'm assuming I've solved the previous case.
-    return strmath_sum(b, a);
-  }
+		return c;
+	}
+	else if (a[0] == '-')
+	{
+		// This is less easy because it's actual subtraction. Let's pass it off.
+		// But not without inverting `a`, which is negative, to positive.
+		// TODO: Figure out a more abstracted/universal way of doing this.
+		char* unsignedA = a + 1;
+		return _subtract(unsignedA, b);
+	}
+	else if (b[0] == '-')
+	{
+		// This is also easy because I'm assuming I've solved the previous case.
+		return strmath_sum(b, a);
+	}
 
-  return _add(a, b);
+	return _add(a, b);
 }
 
 
@@ -283,85 +283,97 @@ char* strmath_sum(char* a, char* b)
 
 int main(int argc, char *argv[])
 {
-  char *a, *b, *c;
+	char *a, *b, *c;
 
-  // printf("\ntest sum of two positive integers\n");
-  // a = "7";
-  // b = "5";
-  // c = strmath_sum(a, b);
-  // printf("%s + %s = %s\n", a, b, c);
+	// printf("\ntest sum of two positive integers\n");
+	// a = "7";
+	// b = "5";
+	// c = strmath_sum(a, b);
+	// printf("%s + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of two bigger positive integers\n");
-  // a = "495";
-  // b = "678";
-  // c = strmath_sum(a, b);
-  // printf("%s + %s = %s\n", a, b, c);
+	// printf("\ntest sum of two bigger positive integers\n");
+	// a = "495";
+	// b = "678";
+	// c = strmath_sum(a, b);
+	// printf("%s + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of two asymetrical positive integers\n");
-  // a = "444";
-  // b = "5";
-  // c = strmath_sum(a, b);
-  // printf("%s + %s = %s\n", a, b, c);
+	// printf("\ntest sum of two asymetrical positive integers\n");
+	// a = "444";
+	// b = "5";
+	// c = strmath_sum(a, b);
+	// printf("%s + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of two bigger asymetrical positive integers\n");
-  // a = "999";
-  // b = "999999";
-  // c = strmath_sum(a, b);
-  // printf("%s + %s = %s\n", a, b, c);
+	// printf("\ntest sum of two bigger asymetrical positive integers\n");
+	// a = "999";
+	// b = "999999";
+	// c = strmath_sum(a, b);
+	// printf("%s + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of two negative integers\n");
-  // a = "-444";
-  // b = "-5";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+	// printf("\ntest sum of two negative integers\n");
+	// a = "-444";
+	// b = "-5";
+	// c = strmath_sum(a, b);
+	// printf("(%s) + (%s) = %s\n", a, b, c);
 
-  // printf("\ntest sum of two negative integers\n");
-  // b = "-4";
-  // a = "-55555";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + (%s) = %s\n", a, b, c);
+	// printf("\ntest sum of two negative integers\n");
+	// b = "-4";
+	// a = "-55555";
+	// c = strmath_sum(a, b);
+	// printf("(%s) + (%s) = %s\n", a, b, c);
 
-  // printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the negative integer first\n");
-  // a = "-4";
-  // b = "5";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + %s = %s\n", a, b, c);
+	// printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the negative integer first\n");
+	// a = "-4";
+	// b = "5";
+	// c = strmath_sum(a, b);
+	// printf("(%s) + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of a positive integer with a big negative integer\nwhere a lot of 1's would need to be borrowed\n");
-  // a = "-1000000";
-  // b = "2";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + %s = %s\n", a, b, c);
+	// printf("\ntest sum of a positive integer with a big negative integer\nwhere a lot of 1's would need to be borrowed\n");
+	// a = "-1000000";
+	// b = "2";
+	// c = strmath_sum(a, b);
+	// printf("(%s) + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the negative integer first\n");
-  // a = "-4";
-  // b = "3";
-  // c = strmath_sum(a, b);
-  // printf("(%s) + %s = %s\n", a, b, c);
+	// printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the negative integer first\n");
+	// a = "-4";
+	// b = "3";
+	// c = strmath_sum(a, b);
+	// printf("(%s) + %s = %s\n", a, b, c);
 
-  // printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the positive integer first\n");
-  // a = "4";
-  // b = "-3";
-  // c = strmath_sum(a, b);
-  // printf("%s + (%s) = %s\n", a, b, c);
+	// printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the positive integer first\n");
+	// a = "4";
+	// b = "-3";
+	// c = strmath_sum(a, b);
+	// printf("%s + (%s) = %s\n", a, b, c);
 
-  // printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the positive integer first\n");
-  // a = "4";
-  // b = "-5";
-  // c = strmath_sum(a, b);
-  // printf("%s + (%s) = %s\n", a, b, c);
+	// printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the positive integer first\n");
+	// a = "4";
+	// b = "-5";
+	// c = strmath_sum(a, b);
+	// printf("%s + (%s) = %s\n", a, b, c);
 
-  // printf("\ntest sum of two integers way beyond normal integer capacity\nanswer should be in the ballpark of \"2.508675309E23\"\nmay need to check by hand (hence the need for this program)\n");
-  // a = "250867530949113464910197";
-  // b = "-180058823002319";
-  // c = strmath_sum(a, b);
-  // printf("%s + (%s) = %s\n", a, b, c);
+	// printf("\ntest sum of two integers way beyond normal integer capacity\nanswer should be in the ballpark of \"2.508675309E23\"\nmay need to check by hand (hence the need for this program)\n");
+	// a = "250867530949113464910197";
+	// b = "-180058823002319";
+	// c = strmath_sum(a, b);
+	// printf("%s + (%s) = %s\n", a, b, c);
 
-  printf("\na simple extra test that's easy to find\n");
-  a = "-1";
-  b = "100";
-  c = strmath_sum(a, b);
-  printf("(%s) + %s = %s\n", a, b, c);
+	printf("\nsimple extra tests that are easy to find\n");
+	a = "-1";
+	b = "100";
+	c = strmath_sum(a, b);
+	printf("(%s) + %s = %s\n", a, b, c);
+	a = "100";
+	b = "-1";
+	c = strmath_sum(a, b);
+	printf("%s + (%s) = %s\n", a, b, c);
+	a = "1";
+	b = "-100";
+	c = strmath_sum(a, b);
+	printf("%s + (%s) = %s\n", a, b, c);
+	a = "-100";
+	b = "1";
+	c = strmath_sum(a, b);
+	printf("(%s) + %s = %s\n", a, b, c);
 
-  return 0;
+	return 0;
 }
