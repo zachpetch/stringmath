@@ -83,7 +83,7 @@ static char* _add(char* str1, char* str2)
 	{
 		ca = a[i];
 		cb = b[i];
-		ia = ca - '0';
+		ia = ca - '0'; // Converts the character to an integer.
 		ib = cb - '0';
 		sum = ia + ib + carry;
 		if (sum > 9)
@@ -223,7 +223,29 @@ static char* _subtract(char* str1, char* str2)
 	}
 	if (borrow > 0)
 	{
-		//
+		// Fortunately, with how we've laid this out, the borrow will not be > 0 while lengthDiff is /> 0
+		while (borrow > 0)
+		{
+			ca = a[i++];
+			ia = ca - '0';
+			sum = ia - borrow;
+			if (sum < 0)
+			{
+				sum = sum + 10;
+				borrow = 1;
+			}
+			else
+			{
+				borrow = 0;
+			}
+			sprintf(t, "%d", sum);
+			strncat(c, t, 1);
+		}
+
+		while (i < strlen(a) - 1)
+		{
+			strncat(c, &a[i++], 1);
+		}
 	}
 	else
 	{
@@ -238,13 +260,27 @@ static char* _subtract(char* str1, char* str2)
 	}
 	// END Section: The subtracting part.
 
+	// Remove leading zeros.
+	c = strrev(c);
+	i = 0;
+	while (c[i] == '0')
+	{
+		i++;
+	}
+	if (i > 0)
+	{
+		c = &c[i];
+	}
+
 	if (str1_was_longest)
 	{
 		// Add a '-' to the begining of the string (by adding it to the end before reversing the string).
+		c = strrev(c);
 		strncat(c, "-", 1);
+		c = strrev(c);
 	}
 
-	return strrev(c);
+	return c;
 }
 
 char* strmath_sum(char* a, char* b)
@@ -285,77 +321,78 @@ int main(int argc, char *argv[])
 {
 	char *a, *b, *c;
 
-	// printf("\ntest sum of two positive integers\n");
-	// a = "7";
-	// b = "5";
-	// c = strmath_sum(a, b);
-	// printf("%s + %s = %s\n", a, b, c);
+	printf("\ntest sum of two positive integers\n");
+	a = "7";
+	b = "5";
+	c = strmath_sum(a, b);
+	printf("%s + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of two bigger positive integers\n");
-	// a = "495";
-	// b = "678";
-	// c = strmath_sum(a, b);
-	// printf("%s + %s = %s\n", a, b, c);
+	printf("\ntest sum of two bigger positive integers\n");
+	a = "495";
+	b = "678";
+	c = strmath_sum(a, b);
+	printf("%s + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of two asymetrical positive integers\n");
-	// a = "444";
-	// b = "5";
-	// c = strmath_sum(a, b);
-	// printf("%s + %s = %s\n", a, b, c);
+	printf("\ntest sum of two asymetrical positive integers\n");
+	a = "444";
+	b = "5";
+	c = strmath_sum(a, b);
+	printf("%s + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of two bigger asymetrical positive integers\n");
-	// a = "999";
-	// b = "999999";
-	// c = strmath_sum(a, b);
-	// printf("%s + %s = %s\n", a, b, c);
+	printf("\ntest sum of two bigger asymetrical positive integers\n");
+	a = "999";
+	b = "999999";
+	c = strmath_sum(a, b);
+	printf("%s + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of two negative integers\n");
-	// a = "-444";
-	// b = "-5";
-	// c = strmath_sum(a, b);
-	// printf("(%s) + (%s) = %s\n", a, b, c);
+	printf("\ntest sum of two negative integers\n");
+	a = "-444";
+	b = "-5";
+	c = strmath_sum(a, b);
+	printf("(%s) + (%s) = %s\n", a, b, c);
 
-	// printf("\ntest sum of two negative integers\n");
-	// b = "-4";
-	// a = "-55555";
-	// c = strmath_sum(a, b);
-	// printf("(%s) + (%s) = %s\n", a, b, c);
+	printf("\ntest sum of two negative integers\n");
+	b = "-4";
+	a = "-55555";
+	c = strmath_sum(a, b);
+	printf("(%s) + (%s) = %s\n", a, b, c);
 
-	// printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the negative integer first\n");
-	// a = "-4";
-	// b = "5";
-	// c = strmath_sum(a, b);
-	// printf("(%s) + %s = %s\n", a, b, c);
+	printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the negative integer first\n");
+	a = "-4";
+	b = "5";
+	c = strmath_sum(a, b);
+	printf("(%s) + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of a positive integer with a big negative integer\nwhere a lot of 1's would need to be borrowed\n");
-	// a = "-1000000";
-	// b = "2";
-	// c = strmath_sum(a, b);
-	// printf("(%s) + %s = %s\n", a, b, c);
+	printf("\ntest sum of a positive integer with a big negative integer\nwhere a lot of 1's would need to be borrowed\n");
+	a = "-1000000";
+	b = "2";
+	c = strmath_sum(a, b);
+	printf("(%s) + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the negative integer first\n");
-	// a = "-4";
-	// b = "3";
-	// c = strmath_sum(a, b);
-	// printf("(%s) + %s = %s\n", a, b, c);
+	printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the negative integer first\n");
+	a = "-4";
+	b = "3";
+	c = strmath_sum(a, b);
+	printf("(%s) + %s = %s\n", a, b, c);
 
-	// printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the positive integer first\n");
-	// a = "4";
-	// b = "-3";
-	// c = strmath_sum(a, b);
-	// printf("%s + (%s) = %s\n", a, b, c);
+	printf("\ntest sum of a positive integer with a negative integer\nof lesser absolute value, with the positive integer first\n");
+	a = "4";
+	b = "-3";
+	c = strmath_sum(a, b);
+	printf("%s + (%s) = %s\n", a, b, c);
 
-	// printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the positive integer first\n");
-	// a = "4";
-	// b = "-5";
-	// c = strmath_sum(a, b);
-	// printf("%s + (%s) = %s\n", a, b, c);
+	printf("\ntest sum of a positive integer with a negative integer\nof greater absolute value, with the positive integer first\n");
+	a = "4";
+	b = "-5";
+	c = strmath_sum(a, b);
+	printf("%s + (%s) = %s\n", a, b, c);
 
-	// printf("\ntest sum of two integers way beyond normal integer capacity\nanswer should be in the ballpark of \"2.508675309E23\"\nmay need to check by hand (hence the need for this program)\n");
-	// a = "250867530949113464910197";
-	// b = "-180058823002319";
-	// c = strmath_sum(a, b);
-	// printf("%s + (%s) = %s\n", a, b, c);
+	printf("\ntest sum of two integers way beyond normal integer capacity\n");
+	a = "250867530949113464910197";
+	b = "-180058823002319";
+	c = strmath_sum(a, b);
+	printf("%s + (%s) = %s\n", a, b, c);
+	printf("                                       correct: 250867530769054641907878");
 
 	printf("\nsimple extra tests that are easy to find\n");
 	a = "-1";
@@ -370,8 +407,8 @@ int main(int argc, char *argv[])
 	b = "-100";
 	c = strmath_sum(a, b);
 	printf("%s + (%s) = %s\n", a, b, c);
-	a = "-100";
-	b = "1";
+	a = "-9876";
+	b = "4";
 	c = strmath_sum(a, b);
 	printf("(%s) + %s = %s\n", a, b, c);
 
