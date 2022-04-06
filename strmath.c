@@ -19,17 +19,31 @@
  * TODO: Free variables that have lost their usefulness with `free(var);`
  */
 
-char* str_abs(char* a) {
+static char* _abs(char* a) {
 	if (a[0] == '-')
 		return a + 1;
 
 	return a;
 }
 
+static char* _negate(char* a)
+{
+	if (a[0] == '-')
+	{
+		return a + 1;
+	}
+	else
+	{
+		a = _rev(a);
+		strncat(a, "-", 1);
+		a = _rev(a);
+	}
+}
+
 /**
  * This only exists because apparently `strrev` is not available in my version (most versions?) of C.
  */
-char* strrev(char *str)
+static char* _rev(char *str)
 {
 	if (!str || ! *str)
 		return str;
@@ -59,8 +73,8 @@ static int _char_to_int(char a)
  */
 static int _compare_abs_value(char* a, char* b)
 {
-	int a_size = strlen(str_abs(a));
-	int b_size = strlen(str_abs(b));
+	int a_size = strlen(_abs(a));
+	int b_size = strlen(_abs(b));
 
 	if (a_size > b_size)
 		return 1;
@@ -68,7 +82,7 @@ static int _compare_abs_value(char* a, char* b)
 		return -1;
 
 	// If neither string of characters is greater than the other, then they must be equal in length, and the characters themselves dictate which is larger.
-	return strcmp(str_abs(a), str_abs(b));
+	return strcmp(_abs(a), _abs(b));
 }
 
 /**
@@ -83,15 +97,15 @@ static char* _add(char* str1, char* str2)
 	// Set the longest string to a, and the shortest to b.
 	if (strlen(str2) > strlen(str1))
 	{
-		a = strrev(str2);
-		b = strrev(str1);
+		a = _rev(str2);
+		b = _rev(str1);
 		lengthDiff = strlen(str2) - strlen(str1);
 		c = malloc(strlen(str2) + 1);
 	}
 	else
 	{
-		a = strrev(str1);
-		b = strrev(str2);
+		a = _rev(str1);
+		b = _rev(str2);
 		lengthDiff = strlen(str1) - strlen(str2);
 		c = malloc(strlen(str1) + 1);
 	}
@@ -173,7 +187,7 @@ static char* _add(char* str1, char* str2)
 		}
 	}
 
-	return strrev(c);
+	return _rev(c);
 }
 
 /**
@@ -197,16 +211,16 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 
 	if (_compare_abs_value(str1, str2) > 0)
 	{
-		a = strrev(str1);
-		b = strrev(str2);
+		a = _rev(str1);
+		b = _rev(str2);
 		c = malloc(strlen(str1) + 1);
 		lengthDiff = strlen(str1) - strlen(str2);
 		str1_was_longest = true;
 	}
 	else
 	{
-		a = strrev(str2);
-		b = strrev(str1);
+		a = _rev(str2);
+		b = _rev(str1);
 		c = malloc(strlen(str2));
 		lengthDiff = strlen(str2) - strlen(str1);
 	}
@@ -268,7 +282,7 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 	// END Section: The subtracting part.
 
 	// Remove leading zeros.
-	c = strrev(c);
+	c = _rev(c);
 	i = 0;
 	while (c[i] == '0')
 	{
@@ -282,12 +296,15 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 	if (str1_was_longest)
 	{
 		// Add a '-' to the begining of the string (by adding it to the end before reversing the string).
-		c = strrev(c);
-		strncat(c, "-", 1);
-		c = strrev(c);
+		c = _negate(c);
 	}
 
 	return c;
+}
+
+static char* _multiply(char* a, char* b)
+{
+	// TODO: Impelement.
 }
 
 /**
@@ -302,7 +319,7 @@ char* str_sum(char* a, char* b)
 	if (a[0] == '-' && b[0] == '-')
 	{
 		// Remove the negative sign from both strings.
-		char* sum = _add(str_abs(a), str_abs(b));
+		char* sum = _add(_abs(a), _abs(b));
 		char* c = (char*) malloc(strlen(sum) + 1);
 		c[0] = '-';
 		strcat(c,sum);
@@ -311,23 +328,36 @@ char* str_sum(char* a, char* b)
 	}
 	else if (a[0] == '-')
 	{
-		return _subtract_a_from_b(str_abs(a), b);
+		return _subtract_a_from_b(_abs(a), b);
 	}
 	else if (b[0] == '-')
 	{
-		return _subtract_a_from_b(str_abs(b), a);
+		return _subtract_a_from_b(_abs(b), a);
 	}
 
 	return _add(a, b);
 }
 
-// char* str_calculate(char* str)
-// {
-// 	// Step 1: Extract substrings within parentheses, and run str_calculate on them.
-// 	// Step 2: Calculate Exponents
-// 	// Step 3: Calculate Multiplication and Division
-// 	// Step 4: Calculate Addition and Subtraction
-// }
+char* str_multiply(char* a, char* b)
+{
+	char* c = _multiply(_abs(a), _abs(b));
+
+	if ((a[0] == '-' && b[0] != '-') || (a[0] != '-' && b[0] == '-'))
+	{
+		return _negate(c);
+	}
+
+	return c;
+}
+
+char* str_calculate(char* str)
+{
+	// Step 1: Extract substrings within parentheses, and run str_calculate on them.
+	// Step 2: Calculate Exponents
+	// Step 3: Calculate Multiplication and Division
+	// Step 4: Calculate Addition and Subtraction
+	return "not implemented";
+}
 
 int main(int argc, char *argv[])
 {
@@ -335,5 +365,6 @@ int main(int argc, char *argv[])
 	printf("(-4) + (-208) = %s\n", str_sum("-4", "-208"));
 	printf("4 + (-202) = %s\n", str_sum("4", "-202"));
 	printf("4 + 208 = %s\n", str_sum("4", "208"));
+	printf("%s\n", str_calculate("4+3/2*(2+3)"));
 	return 0;
 }
