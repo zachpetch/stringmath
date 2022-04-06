@@ -19,6 +19,13 @@
  * TODO: Free variables that have lost their usefulness with `free(var);`
  */
 
+char* str_abs(char* a) {
+	if (a[0] == '-')
+		return a + 1;
+
+	return a;
+}
+
 /**
  * This only exists because apparently `strrev` is not available in my version (most versions?) of C.
  */
@@ -38,7 +45,14 @@ char* strrev(char *str)
 	return newstr;
 }
 
-static int _compare_abs_value(const char *a, const char *b)
+/**
+ * Determine whether a is greater than, equal to, or less than b.
+ *
+ * @param a The first number to compare.
+ * @param b The second number to compare.
+ * @return 1 if abs(a) > abs(b), 0 if abs(a) == abs(b), and -1 if abs(a) < abs(b).
+ */
+static int _compare_abs_value(char* a, char* b)
 {
 	// Convert to positive values
 	if (a[0] == '-')
@@ -293,14 +307,19 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 	return c;
 }
 
-char* strmath_sum(char* a, char* b)
+/**
+ * A function that multiplies two numbers.
+ *
+ * @param char* a A number as a string.
+ * @param char* b A number as a string.
+ * @return char* The sum of the two numbers as a string.
+ */
+char* str_sum(char* a, char* b)
 {
 	if (a[0] == '-' && b[0] == '-')
 	{
 		// Remove the negative sign from both strings.
-		char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on (ex. if a is -23, unsignedA is 23).
-		char* unsignedB = b + 1;
-		char* sum = _add(unsignedA, unsignedB);
+		char* sum = _add(str_abs(a), str_abs(b));
 		char* c = (char*) malloc(strlen(sum) + 1);
 		c[0] = '-';
 		strcat(c,sum);
@@ -309,26 +328,30 @@ char* strmath_sum(char* a, char* b)
 	}
 	else if (a[0] == '-')
 	{
-		char* unsignedA = a + 1;
-		return _subtract_a_from_b(unsignedA, b);
+		return _subtract_a_from_b(str_abs(a), b);
 	}
 	else if (b[0] == '-')
 	{
-		return strmath_sum(b, a);
+		return _subtract_a_from_b(str_abs(b), a);
 	}
 
 	return _add(a, b);
 }
 
+// char* str_calculate(char* str)
+// {
+// 	// Step 1: Extract substrings within parentheses, and run str_calculate on them.
+// 	// Step 2: Calculate Exponents
+// 	// Step 3: Calculate Multiplication and Division
+// 	// Step 4: Calculate Addition and Subtraction
+// }
+
 int main(int argc, char *argv[])
 {
-	char *a, *b, *c;
-
-	printf("test sum of two positive integers\n");
-	a = "1000";
-	b = "-477";
-	c = strmath_sum(a, b);
-	printf("%s + (%s) = %s\n", a, b, c);
+	printf("(-4) + (-298) = %s\n", str_sum("-4", "-298"));
+	printf("4 + (-298) = %s\n", str_sum("4", "-298"));
+	printf("(-4) + 298 = %s\n", str_sum("-4", "298"));
+	printf("4 + 298 = %s\n", str_sum("4", "298"));
 
 	return 0;
 }
