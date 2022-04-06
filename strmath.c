@@ -45,6 +45,11 @@ char* strrev(char *str)
 	return newstr;
 }
 
+static int _char_to_int(char a)
+{
+	return a - '0';
+}
+
 /**
  * Determine whether a is greater than, equal to, or less than b.
  *
@@ -54,14 +59,8 @@ char* strrev(char *str)
  */
 static int _compare_abs_value(char* a, char* b)
 {
-	// Convert to positive values
-	if (a[0] == '-')
-		a++;
-	if (b[0] == '-')
-		b++;
-
-	int a_size = strlen(a);
-	int b_size = strlen(b);
+	int a_size = strlen(str_abs(a));
+	int b_size = strlen(str_abs(b));
 
 	if (a_size > b_size)
 		return 1;
@@ -69,7 +68,7 @@ static int _compare_abs_value(char* a, char* b)
 		return -1;
 
 	// If neither string of characters is greater than the other, then they must be equal in length, and the characters themselves dictate which is larger.
-	return strcmp(a, b);
+	return strcmp(str_abs(a), str_abs(b));
 }
 
 /**
@@ -101,15 +100,9 @@ static char* _add(char* str1, char* str2)
 	int carry = 0;
 	int sum, i;
 	char *t = malloc(1);
-	char ca, cb;
-	int ia, ib;
 	for (i = 0; i < strlen(b); i++)
 	{
-		ca = a[i];
-		cb = b[i];
-		ia = ca - '0'; // Converts the character to an integer.
-		ib = cb - '0';
-		sum = ia + ib + carry;
+		sum = _char_to_int(a[i]) + _char_to_int(b[i]) + carry;
 		if (sum > 9)
 		{
 			carry = 1;
@@ -130,9 +123,7 @@ static char* _add(char* str1, char* str2)
 		{
 			while (carry > 0 && i < strlen(a))
 			{
-				ca = a[i];
-				ia = ca - '0';
-				sum = ia + carry;
+				sum = _char_to_int(a[i]) + carry;
 				if (sum > 9)
 				{
 					carry = 1;
@@ -224,15 +215,9 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 	int borrow = 0;
 	int sum, i;
 	char *t = malloc(1);
-	char ca, cb;
-	int ia, ib;
 	for (i = 0; i < strlen(b); i++)
 	{
-		ca = a[i];
-		cb = b[i];
-		ia = ca - '0';
-		ib = cb - '0';
-		sum = ia - ib - borrow;
+		sum = _char_to_int(a[i]) - _char_to_int(b[i]) - borrow;
 		if (sum < 0)
 		{
 			sum = sum + 10;
@@ -250,9 +235,7 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 		// Fortunately, with how we've laid this out, the borrow will not be > 0 while lengthDiff is /> 0
 		while (borrow > 0)
 		{
-			ca = a[i++];
-			ia = ca - '0';
-			sum = ia - borrow;
+			sum = _char_to_int(a[i++]) - borrow;
 			if (sum < 0)
 			{
 				sum = sum + 10;
@@ -266,7 +249,7 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 			strncat(c, t, 1);
 		}
 
-		while (i < strlen(a) - 1)
+		while (i < strlen(a))
 		{
 			strncat(c, &a[i++], 1);
 		}
@@ -348,10 +331,9 @@ char* str_sum(char* a, char* b)
 
 int main(int argc, char *argv[])
 {
-	printf("(-4) + (-298) = %s\n", str_sum("-4", "-298"));
-	printf("4 + (-298) = %s\n", str_sum("4", "-298"));
-	printf("(-4) + 298 = %s\n", str_sum("-4", "298"));
-	printf("4 + 298 = %s\n", str_sum("4", "298"));
-
+	printf("(-4) + 202 = %s\n", str_sum("-4", "202"));
+	printf("(-4) + (-208) = %s\n", str_sum("-4", "-208"));
+	printf("4 + (-202) = %s\n", str_sum("4", "-202"));
+	printf("4 + 208 = %s\n", str_sum("4", "208"));
 	return 0;
 }
