@@ -4,11 +4,15 @@
 #include <stdbool.h>
 
 /**
- * Could consider creating a struct (or data type) that is like a char, but only allows 0 to 9.
+ * TODO: consider creating a struct (or data type) that is like a char, but only allows 0 to 9.
  * There must be *some* way of doing that, so that this data type would be smaller than a string,
  * since, for each char we don't need 8 bits like we do with a string, but only 4. Compared to
  * an int, it'll be smaller for a lot, but then bigger for a lot too. An int is always 4 bytes
  * or 32 bits, but this data type would only reach 4 bytes when it's 8 digits long.
+ */
+
+/**
+ * TODO: Contemplate having an all-encompasing string math function. Where you submit a string of math, like "-5^3+4*9^(1/2)" and it returns the correct answer as a string (in this example, "-113").
  */
 
 /**
@@ -36,6 +40,12 @@ char* strrev(char *str)
 
 static int _compare_abs_value(const char *a, const char *b)
 {
+	// Convert to positive values
+	if (a[0] == '-')
+		a++;
+	if (b[0] == '-')
+		b++;
+
 	int a_size = strlen(a);
 	int b_size = strlen(b);
 
@@ -168,7 +178,7 @@ static char* _add(char* str1, char* str2)
  * @param str1 A negative number as a string (without the negative sign).
  * @param str2 A positive number, as a string, from which the negative number is to be subtracted.
  */
-static char* _subtract(char* str1, char* str2)
+static char* _subtract_a_from_b(char* str1, char* str2)
 {
 	// If the values are the same, then subtracting one from the other will result in 0.
 	if (str1 == str2)
@@ -287,7 +297,7 @@ char* strmath_sum(char* a, char* b)
 {
 	if (a[0] == '-' && b[0] == '-')
 	{
-		// If both numbers are negative, this is easy because it's still addition.
+		// Remove the negative sign from both strings.
 		char* unsignedA = a + 1; // This sets unsignedA[0] = a[1], and so on (ex. if a is -23, unsignedA is 23).
 		char* unsignedB = b + 1;
 		char* sum = _add(unsignedA, unsignedB);
@@ -299,23 +309,16 @@ char* strmath_sum(char* a, char* b)
 	}
 	else if (a[0] == '-')
 	{
-		// This is less easy because it's actual subtraction. Let's pass it off.
-		// But not without inverting `a`, which is negative, to positive.
-		// TODO: Figure out a more abstracted/universal way of doing this.
 		char* unsignedA = a + 1;
-		return _subtract(unsignedA, b);
+		return _subtract_a_from_b(unsignedA, b);
 	}
 	else if (b[0] == '-')
 	{
-		// This is also easy because I'm assuming I've solved the previous case.
 		return strmath_sum(b, a);
 	}
 
 	return _add(a, b);
 }
-
-
-// Contemplate having an all-encompasing string math function. Where you submit a string of math, like "-5^3+4*9^(1/2)" and it returns the correct answer as a string (in this example, "-113").
 
 int main(int argc, char *argv[])
 {
