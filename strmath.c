@@ -19,27 +19,6 @@
  * TODO: Free variables that have lost their usefulness with `free(var);`
  */
 
-static char* _abs(char* a) {
-	if (a[0] == '-')
-		return a + 1;
-
-	return a;
-}
-
-static char* _negate(char* a)
-{
-	if (a[0] == '-')
-	{
-		return a + 1;
-	}
-	else
-	{
-		a = _rev(a);
-		strncat(a, "-", 1);
-		a = _rev(a);
-	}
-}
-
 /**
  * This only exists because apparently `strrev` is not available in my version (most versions?) of C.
  */
@@ -57,6 +36,27 @@ static char* _rev(char *str)
 	}
 
 	return newstr;
+}
+
+static char* _abs(char* a) {
+	if (a[0] == '-')
+		return a + 1;
+
+	return a;
+}
+
+static char* _negate(char* a)
+{
+	if (a[0] == '-')
+	{
+		return a + 1;
+	}
+
+	a = _rev(a);
+	strncat(a, "-", 1);
+	a = _rev(a);
+
+	return a;
 }
 
 static int _char_to_int(char a)
@@ -304,7 +304,29 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 
 static char* _multiply(char* a, char* b)
 {
-	// TODO: Impelement.
+	char* total = "0";
+	char* subtotal = "0";
+
+	// TODO: Implement.
+	for (int i = 0; i < strlen(a); i++)
+	{
+		for (int j = 0; i < strlen(b); j++)
+		{
+			subtotal = "0";
+			// convert a[i] into an int
+			for (int k = 0; k < _char_to_int(a[i]); k++)
+			{
+				// TODO: Added value needs to be multiplied by 10^(i+j)... I think (ultimately, it needs i+j zeros catenated onto the end of it).
+				subtotal = _add(subtotal, b);
+			}
+
+			total = _add(total, subtotal);
+		}
+	}
+
+	// Add up all the values in array_of_products
+
+	return "TODO: Implement.";
 }
 
 /**
