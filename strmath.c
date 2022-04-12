@@ -64,6 +64,11 @@ static int _char_to_int(char a)
 	return a - '0';
 }
 
+static char* _add_a_zero(char* a)
+{
+	return strcat(a, "0");
+}
+
 /**
  * Determine whether a is greater than, equal to, or less than b.
  *
@@ -310,13 +315,19 @@ static char* _multiply(char* a, char* b)
 	// TODO: Implement.
 	for (int i = 0; i < strlen(a); i++)
 	{
-		for (int j = 0; i < strlen(b); j++)
+		for (int j = 0; j < strlen(b); j++)
 		{
 			subtotal = "0";
 			// convert a[i] into an int
 			for (int k = 0; k < _char_to_int(a[i]); k++)
 			{
+				char* x = malloc(strlen(b) + i + j);
+				x = b;
 				// TODO: Added value needs to be multiplied by 10^(i+j)... I think (ultimately, it needs i+j zeros catenated onto the end of it).
+				for (int l = 0; l < i + j; l++)
+				{
+					x = _add_a_zero(x);
+				}
 				subtotal = _add(subtotal, b);
 			}
 
@@ -326,7 +337,7 @@ static char* _multiply(char* a, char* b)
 
 	// Add up all the values in array_of_products
 
-	return "TODO: Implement.";
+	return total;
 }
 
 /**
@@ -372,6 +383,14 @@ char* str_multiply(char* a, char* b)
 	return c;
 }
 
+char* str_power(char* a, char* b)
+{
+	// TODO: Implement.
+	// This would just multiply `a` by itself `b` times.
+	// It's actually quite simple.
+	return "not implemented";
+}
+
 char* str_calculate(char* str)
 {
 	// Step 1: Extract substrings within parentheses, and run str_calculate on them.
@@ -383,10 +402,9 @@ char* str_calculate(char* str)
 
 int main(int argc, char *argv[])
 {
-	printf("(-4) + 202 = %s\n", str_sum("-4", "202"));
-	printf("(-4) + (-208) = %s\n", str_sum("-4", "-208"));
-	printf("4 + (-202) = %s\n", str_sum("4", "-202"));
-	printf("4 + 208 = %s\n", str_sum("4", "208"));
-	printf("%s\n", str_calculate("4+3/2*(2+3)"));
+	char* a = "-71";
+	char* b = "-549";
+	printf("(%s) * (%s) = %s\nShould be 38979.", a, b, str_multiply(a, b));
+	// printf("%s\n", str_calculate("4+3/2*(2+3)"));
 	return 0;
 }
