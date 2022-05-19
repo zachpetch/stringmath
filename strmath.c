@@ -66,7 +66,11 @@ static int _char_to_int(char a)
 
 static char* _add_a_zero(char* a)
 {
-	return strcat(a, "0");
+	char* newstr = malloc(strlen(a) + strlen("0"));
+	strcat(newstr, a);
+	strcat(newstr, "0");
+
+	return newstr;
 }
 
 /**
@@ -307,41 +311,54 @@ static char* _subtract_a_from_b(char* str1, char* str2)
 	return c;
 }
 
+static char* _multiply_single_digit(char a, char b)
+{
+	// Add a to itself b times.
+	char *c = malloc(2);
+	c = "0";
+
+	char x[2] = {a , '\0'};
+
+	for (int i = 0; i < _char_to_int(b); i++)
+	{
+		c = _add(c, x);
+	}
+
+	return c;
+}
+
+/**
+ * A function that multiplies two numbers.
+ *
+ * @param a A number as a string.
+ * @param b A number as a string.
+ * @return The product of a and b as a string.
+ */
 static char* _multiply(char* a, char* b)
 {
 	char* total = "0";
 	char* subtotal = "0";
 
-	// TODO: Implement.
 	for (int i = 0; i < strlen(a); i++)
 	{
 		for (int j = 0; j < strlen(b); j++)
 		{
-			subtotal = "0";
-			// convert a[i] into an int
-			for (int k = 0; k < _char_to_int(a[i]); k++)
+			subtotal = _multiply_single_digit(a[i], b[j]);
+
+			for (int k = 0; k < strlen(a)-(i+1)+strlen(b)-(j+1); k++)
 			{
-				char* x = malloc(strlen(b) + i + j);
-				x = b;
-				// TODO: Added value needs to be multiplied by 10^(i+j)... I think (ultimately, it needs i+j zeros catenated onto the end of it).
-				for (int l = 0; l < i + j; l++)
-				{
-					x = _add_a_zero(x);
-				}
-				subtotal = _add(subtotal, b);
+				subtotal = _add_a_zero(subtotal);
 			}
 
 			total = _add(total, subtotal);
 		}
 	}
 
-	// Add up all the values in array_of_products
-
 	return total;
 }
 
 /**
- * A function that multiplies two numbers.
+ * A function that adds two numbers.
  *
  * @param char* a A number as a string.
  * @param char* b A number as a string.
@@ -404,7 +421,7 @@ int main(int argc, char *argv[])
 {
 	char* a = "-71";
 	char* b = "-549";
-	printf("(%s) * (%s) = %s\nShould be 38979.", a, b, str_multiply(a, b));
+	printf("(%s) * (%s) = %s\n       Should be 38979.\n", a, b, str_multiply(a, b));
 	// printf("%s\n", str_calculate("4+3/2*(2+3)"));
 	return 0;
 }
